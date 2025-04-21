@@ -30,6 +30,8 @@ class MinimaxAI:
         self.nodes_explored = 0
         self.evaluation_time = 0
         self.pruning_count = 0
+
+        self.transposition_table = {}  # Cache for board evaluations
             
     def get_move(self, board):
         """
@@ -45,6 +47,7 @@ class MinimaxAI:
         self.nodes_explored = 0
         self.evaluation_time = 0
         self.pruning_count = 0
+        self.transposition_table.clear()  # Clear cache between moves
         
         start_time = time.time()
         
@@ -92,8 +95,8 @@ class MinimaxAI:
     
     def _minimax(self, board, depth, alpha, beta, is_maximizing, player):
         """
-        Minimax algorithm with alpha-beta pruning.
-        
+        Minimax algorithm with alpha-beta pruning and memoization.
+
         Args:
             board (ConnectFourBoard): Current game board
             depth (int): Current depth of the search tree
@@ -101,41 +104,56 @@ class MinimaxAI:
             beta (float): Beta value for pruning
             is_maximizing (bool): True if maximizing player's turn, False otherwise
             player (int): Player number (1 or 2) for whom we're evaluating
-            
+
         Returns:
             float: Score for the current board state
         """
-        # Increment nodes explored counter
+        # Track nodes explored
         self.nodes_explored += 1
-        
-        # Check if game is over or we've reached maximum depth
+
+        # Compute a hash for the current board state
+        board_hash = self._get_board_hash(board)
+
+        # Return cached result if available
+        if board_hash in self.transposition_table:
+            return self.transposition_table[board_hash]
+
+        # Terminal node or depth limit
         if depth == 0 or board.is_game_over():
-            return self._evaluate_board(board, player)
-        
+            value = self._evaluate_board(board, player)
+            self.transposition_table[board_hash] = value
+            return value
+
         valid_moves = board.get_valid_moves()
-        
+
         if is_maximizing:
             value = -math.inf
             for col in valid_moves:
                 board_copy = self._copy_board(board)
                 board_copy.make_move(col)
-                value = max(value, self._minimax(board_copy, depth - 1, alpha, beta, False, player))
+                score = self._minimax(board_copy, depth - 1, alpha, beta, False, player)
+                value = max(value, score)
                 alpha = max(alpha, value)
                 if alpha >= beta:
                     self.pruning_count += 1
                     break  # Beta cutoff
+            self.transposition_table[board_hash] = value
             return value
-        else:
+
+        else:  # Minimizing
             value = math.inf
             for col in valid_moves:
                 board_copy = self._copy_board(board)
                 board_copy.make_move(col)
-                value = min(value, self._minimax(board_copy, depth - 1, alpha, beta, True, player))
+                score = self._minimax(board_copy, depth - 1, alpha, beta, True, player)
+                value = min(value, score)
                 beta = min(beta, value)
                 if alpha >= beta:
                     self.pruning_count += 1
                     break  # Alpha cutoff
+            self.transposition_table[board_hash] = value
             return value
+
     
     def _evaluate_board(self, board, player):
         """
@@ -158,20 +176,22 @@ class MinimaxAI:
             else:
                 return -1000  # Opponent won
         
-        # Otherwise, evaluate the board based on potential winning positions
-        opponent = 3 - player  # Opponent's player number (1->2, 2->1)
+        opponent = 3 - player
         score = 0
-        
-        # Check horizontal, vertical, and diagonal potential wins
-        # and assign scores based on how many of player's pieces are in each line
-        
-        # Horizontal
+
+        # Encourage center column occupation
+        center_col = board.cols // 2
+        center_column = [board.board[r][center_col] for r in range(board.rows)]
+        center_count = center_column.count(player)
+        score += center_count * 3  # Weight = 3 per center disc
+
+        # Horizontal windows
         for r in range(board.rows):
             for c in range(board.cols - 3):
                 window = [board.board[r][c+i] for i in range(4)]
                 score += self._evaluate_window(window, player, opponent)
         
-        # Vertical
+        # Vertical windows
         for c in range(board.cols):
             for r in range(board.rows - 3):
                 window = [board.board[r+i][c] for i in range(4)]
@@ -189,8 +209,23 @@ class MinimaxAI:
                 window = [board.board[r-i][c+i] for i in range(4)]
                 score += self._evaluate_window(window, player, opponent)
         
+        # Penalize isolated discs
+        for r in range(board.rows):
+            for c in range(board.cols):
+                if board.board[r][c] == player:
+                    neighbors = []
+                    for dr in [-1, 0, 1]:
+                        for dc in [-1, 0, 1]:
+                            if dr == 0 and dc == 0:
+                                continue
+                            nr, nc = r + dr, c + dc
+                            if 0 <= nr < board.rows and 0 <= nc < board.cols:
+                                neighbors.append(board.board[nr][nc])
+                    if player not in neighbors:
+                        score -= 1  # Penalize for isolation
+
         return score
-    
+
     def _evaluate_window(self, window, player, opponent):
         """
         Evaluate a window of 4 consecutive positions.
@@ -261,3 +296,11 @@ class MinimaxAI:
         new_board.current_player = board.current_player
         
         return new_board
+    
+    def _get_board_hash(self, board):
+        """
+        Create a hashable representation of the board state.
+        Includes the board grid and current player.
+        """
+        flat_board = tuple(cell for row in board.board for cell in row)
+        return (flat_board, board.current_player)

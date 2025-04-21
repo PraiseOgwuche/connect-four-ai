@@ -82,14 +82,33 @@ class TerminalInterface:
         Display AI performance statistics.
         """
         stats = self.ai.get_performance_stats()
-        
         print("\nAI Performance Statistics:")
-        print(f"Difficulty: {stats['difficulty']}")
-        print(f"Search depth: {stats['max_depth']}")
-        print(f"Nodes explored: {stats['nodes_explored']}")
-        print(f"Pruning count: {stats['pruning_count']}")
-        print(f"Evaluation time: {stats['evaluation_time']:.4f} seconds")
-        print(f"Nodes per second: {stats['nodes_per_second']:.0f}")
+
+        if stats.get("difficulty"):
+            print(f"Difficulty: {stats['difficulty']}")
+
+        if hasattr(self.ai, "simulations"):
+            # MCTS-specific stats
+            print(f"Simulations: {stats['simulations']}")
+            print(f"Nodes explored: {stats['nodes_explored']}")
+            print(f"Simulation time: {stats['simulation_time']:.4f} seconds")
+            print(f"Simulations per second: {int(stats['simulations_per_second'])}")
+        else:
+            # Minimax-specific stats
+            print(f"Search depth: {stats['max_depth']}")
+            print(f"Nodes explored: {stats['nodes_explored']}")
+            print(f"Pruning count: {stats['pruning_count']}")
+            print(f"Evaluation time: {stats['evaluation_time']:.4f} seconds")
+            print(f"Nodes per second: {int(stats['nodes_per_second'])}")
+        print(f"Total time: {stats['total_time']:.4f} seconds")
+        #print(f"Total nodes explored: {stats['total_nodes_explored']}")
+        #print(f"Total pruning count: {stats['total_pruning_count']}")
+        #print(f"Total nodes per second: {int(stats['total_nodes_per_second'])}")
+        #print(f"Total simulation time: {stats['total_simulation_time']:.4f} seconds")
+        #print(f"Total simulations per second: {int(stats['total_simulations_per_second'])}")
+        print(f"Total AI wins: {self.stats['ai_wins']}")
+        print(f"Total player wins: {self.stats['player_wins']}")
+        print(f"Total draws: {self.stats['draws']}")
     
     def play_game(self):
         """
