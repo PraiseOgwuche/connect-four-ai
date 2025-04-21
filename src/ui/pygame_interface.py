@@ -121,19 +121,22 @@ class PygameInterface:
         
         # Background for stats
         pygame.draw.rect(self.screen, self.BLACK, 
-                         (0, 0, self.width, self.SQUARESIZE))
+                        (0, 0, self.width, self.SQUARESIZE))
         
         # Display stats
         stats_text = [
             f"Nodes: {stats['nodes_explored']}",
             f"Prunes: {stats['pruning_count']}",
             f"Time: {stats['evaluation_time']:.2f}s",
-            f"NPS: {stats['nodes_per_second']:.0f}"
+            f"NPS: {int(stats['nodes_per_second'])}"
         ]
+        
+        # Calculate spacing between stats
+        spacing = self.width // (len(stats_text) + 1)
         
         for i, text in enumerate(stats_text):
             label = self.font.render(text, True, self.WHITE)
-            self.screen.blit(label, (self.width // 2 + i * 120 - 150, self.SQUARESIZE // 2 - 10))
+            self.screen.blit(label, ((i + 1) * spacing - label.get_width() // 2, self.SQUARESIZE // 2 - 10))
         
         pygame.display.update()
     
@@ -287,9 +290,12 @@ class PygameInterface:
             # Game over, wait for user to close window or play again
             if self.game_over:
                 # Display "Play again" button
-                pygame.draw.rect(self.screen, self.BLUE, (self.width // 2 - 100, self.height - 60, 200, 40))
+                play_again_button = pygame.Rect(self.width // 2 - 100, self.height - 60, 200, 40)
+                pygame.draw.rect(self.screen, self.BLUE, play_again_button)
                 play_again_text = self.font.render("Play Again", True, self.WHITE)
-                self.screen.blit(play_again_text, (self.width // 2 - play_again_text.get_width() // 2, self.height - 40))
+                text_x = play_again_button.centerx - play_again_text.get_width() // 2
+                text_y = play_again_button.centery - play_again_text.get_height() // 2
+                self.screen.blit(play_again_text, (text_x, text_y))
                 pygame.display.update()
                 
                 # Wait for user to click button or close window

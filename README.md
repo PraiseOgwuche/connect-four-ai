@@ -1,25 +1,14 @@
 # Connect Four AI
 
-An implementation of Connect Four with an AI opponent using the minimax algorithm with alpha-beta pruning. Created as a final project for AI class.
+An implementation of Connect Four with an AI opponent using minimax algorithm with alpha-beta pruning. Created as a final project for AI class.
 
-## Project Overview
-
-This project implements a Connect Four game with an AI opponent that uses the minimax algorithm with alpha-beta pruning to make decisions. The AI evaluates the game state and chooses the best move based on a look-ahead search of possible game states.
-
-### Features
+## Features
 
 - Terminal-based user interface
-- Optional Pygame graphical interface (when run locally)
+- Optional Pygame graphical interface
 - AI opponent with three difficulty levels (Easy, Medium, Hard)
 - Performance analysis of the AI's decision-making process
 - Game statistics tracking
-
-## Learning Outcomes Addressed
-
-This project addresses the following course learning outcomes:
-- **Search (#search)**: Implementation of the minimax algorithm with alpha-beta pruning to search the game tree
-- **AI Logic (#ailogic)**: Logical evaluation of game states to determine the best move
-- **AI Coding (#aicoding)**: Implementation of AI algorithms in Python
 
 ## Setup
 
@@ -34,3 +23,35 @@ source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
+
+### Installing Pygame
+
+If you want to use the graphical interface, you'll need to install Pygame:
+
+```bash
+pip install pygame
+```
+
+On macOS, you might need to install SDL dependencies first using Homebrew:
+
+```bash
+brew install sdl2 sdl2_image sdl2_mixer sdl2_ttf
+pip install pygame
+```
+
+## Running the Game
+
+```bash
+python main.py
+```
+
+This will prompt you to select either the terminal interface or the graphical interface (Pygame).
+
+## How to Play
+
+1. When you start the game, you'll be prompted to select a difficulty level:
+   - **Easy**: The AI looks 2 moves ahead
+   - **Medium**: The AI looks 4 moves ahead
+   - **Hard**: The AI looks 6 moves ahead
+

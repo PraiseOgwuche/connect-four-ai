@@ -70,7 +70,17 @@ class ConnectFourBoard:
         Returns:
             bool: True if game is over, False otherwise
         """
-        return self.get_winner() is not None or len(self.get_valid_moves()) == 0
+        # Check for a winner
+        if self.get_winner() is not None:
+            return True
+        
+        # Check if the board is full (no empty spaces)
+        for c in range(self.cols):
+            if self.board[0][c] == 0:  # Check top row
+                return False
+        
+        # If no winner and board is full, it's a draw
+        return True
     
     def get_winner(self):
         """
@@ -84,6 +94,7 @@ class ConnectFourBoard:
             for c in range(self.cols - 3):
                 if (self.board[r][c] != 0 and
                     self.board[r][c] == self.board[r][c+1] == self.board[r][c+2] == self.board[r][c+3]):
+                    print(f"Horizontal win found at row {r}, columns {c}-{c+3}")
                     return self.board[r][c]
         
         # Check for 4 in a row vertically
@@ -91,6 +102,7 @@ class ConnectFourBoard:
             for r in range(self.rows - 3):
                 if (self.board[r][c] != 0 and
                     self.board[r][c] == self.board[r+1][c] == self.board[r+2][c] == self.board[r+3][c]):
+                    print(f"Vertical win found at column {c}, rows {r}-{r+3}")
                     return self.board[r][c]
         
         # Check for 4 in a row diagonally (top-left to bottom-right)
@@ -98,6 +110,7 @@ class ConnectFourBoard:
             for c in range(self.cols - 3):
                 if (self.board[r][c] != 0 and
                     self.board[r][c] == self.board[r+1][c+1] == self.board[r+2][c+2] == self.board[r+3][c+3]):
+                    print(f"Diagonal (top-left to bottom-right) win found starting at ({r},{c})")
                     return self.board[r][c]
         
         # Check for 4 in a row diagonally (bottom-left to top-right)
@@ -105,31 +118,11 @@ class ConnectFourBoard:
             for c in range(self.cols - 3):
                 if (self.board[r][c] != 0 and
                     self.board[r][c] == self.board[r-1][c+1] == self.board[r-2][c+2] == self.board[r-3][c+3]):
+                    print(f"Diagonal (bottom-left to top-right) win found starting at ({r},{c})")
                     return self.board[r][c]
         
         return None
     
     def __str__(self):
         """
-        String representation of the board.
-        
-        Returns:
-            str: String representation of the board
-        """
-        result = ""
-        for row in self.board:
-            result += "|"
-            for cell in row:
-                if cell == 0:
-                    result += " "
-                elif cell == 1:
-                    result += "X"
-                else:
-                    result += "O"
-                result += "|"
-            result += "\n"
-        result += "-" * (self.cols * 2 + 1) + "\n"
-        result += " "
-        for col in range(self.cols):
-            result += str(col) + " "
-        return result
+        String 
