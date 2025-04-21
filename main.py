@@ -1,5 +1,6 @@
 from src.game.board import ConnectFourBoard
 from src.ai.minimax import MinimaxAI
+from src.ai.mcts import MCTS_AI
 import sys
 import os
 
@@ -29,6 +30,29 @@ def select_interface():
         except ValueError:
             print("Please enter a valid number.")
 
+def select_ai_algorithm():
+    """
+    Let the user select the AI algorithm to use.
+    
+    Returns:
+        str: AI algorithm ('minimax' or 'mcts')
+    """
+    print("\nSelect AI algorithm:")
+    print("1. Minimax with Alpha-Beta Pruning")
+    print("2. Monte Carlo Tree Search (MCTS)")
+    
+    while True:
+        try:
+            choice = int(input("Enter your choice (1-2): "))
+            if choice == 1:
+                return 'minimax'
+            elif choice == 2:
+                return 'mcts'
+            else:
+                print("Invalid choice. Try again.")
+        except ValueError:
+            print("Please enter a valid number.")
+
 def main():
     # Check if interface type is provided as a command line argument
     if len(sys.argv) > 1 and sys.argv[1] in ['terminal', 'pygame']:
@@ -37,11 +61,17 @@ def main():
         # Let the user select the interface
         interface_type = select_interface()
     
+    # Let the user select the AI algorithm
+    ai_algorithm = select_ai_algorithm()
+    
     # Create a new game board
     board = ConnectFourBoard()
     
-    # Create the AI player
-    ai = MinimaxAI()
+    # Create the AI player based on the selected algorithm
+    if ai_algorithm == 'minimax':
+        ai = MinimaxAI()
+    else:  # mcts
+        ai = MCTS_AI()
     
     # Create the user interface
     if interface_type == 'pygame':

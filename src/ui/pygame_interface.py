@@ -115,30 +115,37 @@ class PygameInterface:
     
     def draw_performance_stats(self):
         """
-        Draw AI performance statistics.
+        Draw AI performance statistics (minimal layout for clarity).
         """
         stats = self.ai.get_performance_stats()
-        
-        # Background for stats
-        pygame.draw.rect(self.screen, self.BLACK, 
-                        (0, 0, self.width, self.SQUARESIZE))
-        
-        # Display stats
-        stats_text = [
-            f"Nodes: {stats['nodes_explored']}",
-            f"Prunes: {stats['pruning_count']}",
-            f"Time: {stats['evaluation_time']:.2f}s",
-            f"NPS: {int(stats['nodes_per_second'])}"
-        ]
-        
-        # Calculate spacing between stats
-        spacing = self.width // (len(stats_text) + 1)
-        
-        for i, text in enumerate(stats_text):
+
+        # Clear the top bar
+        pygame.draw.rect(self.screen, self.BLACK, (0, 0, self.width, self.SQUARESIZE))
+
+        # Line Y-position
+        top_y = self.SQUARESIZE // 3
+        x_margin = 20
+        col_spacing = 220  # More generous spacing
+
+        if hasattr(self.ai, 'simulations'):  # MCTS
+            labels = [
+                f"Difficulty: {stats['difficulty']}",
+                f"Simulations: {stats['simulations']}",
+                f"Time: {stats['simulation_time']:.2f}s"
+            ]
+        else:  # Minimax
+            labels = [
+                f"Difficulty: {stats['difficulty']}",
+                f"Depth: {stats['max_depth']}",
+                f"Time: {stats['evaluation_time']:.2f}s"
+            ]
+
+        for i, text in enumerate(labels):
             label = self.font.render(text, True, self.WHITE)
-            self.screen.blit(label, ((i + 1) * spacing - label.get_width() // 2, self.SQUARESIZE // 2 - 10))
-        
+            self.screen.blit(label, (x_margin + i * col_spacing, top_y))
+
         pygame.display.update()
+
     
     def select_difficulty(self):
         """
