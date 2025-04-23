@@ -3,6 +3,8 @@
 As my final project for Introduction to Artificial Intelligence, I've created a Connect Four game that showcases two different AI approaches: Minimax with alpha-beta pruning and Monte Carlo Tree Search (MCTS) both comparatively and against a human opponent. I designed this project to demonstrate my understanding of search algorithms, game theory, and AI decision-making processes.
 The project implements a classic Connect Four game where players take turns dropping colored discs into a vertical grid, aiming to connect four of their discs in a row while preventing their opponent from doing the same. What makes this implementation special is the ability to play against two different AI algorithms and analyze their performance in real-time.
 
+![game play image](https://github.com/user-attachments/assets/c702a4d1-52e9-4671-931b-043f503734bb)
+
 ## Features
 
 - Terminal-based user interface
