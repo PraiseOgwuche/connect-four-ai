@@ -47,10 +47,20 @@ def compare_performance():
     print("==========================================")
     
     print("\nPlaying Minimax vs MCTS (10 games)...")
-    result = play_games(MinimaxAI('medium'), MCTS_AI('medium'), 10)
-    print(f"Minimax wins: {result['minimax_wins']}")
-    print(f"MCTS wins: {result['mcts_wins']}")
-    print(f"Draws: {result['draws']}")
+    result_10 = play_games(MinimaxAI('medium'), MCTS_AI('medium'), 10, verbose=True)
+    print(f"Minimax wins: {result_10['minimax_wins']}")
+    print(f"MCTS wins: {result_10['mcts_wins']}")
+    print(f"Draws: {result_10['draws']}")
+    
+    print("\nPlaying Minimax vs MCTS (100 games)...")
+    print("This will take some time, please wait...")
+    result_100 = play_games(MinimaxAI('medium'), MCTS_AI('medium'), 100, verbose=False)
+    print(f"Minimax wins: {result_100['minimax_wins']}")
+    print(f"MCTS wins: {result_100['mcts_wins']}")
+    print(f"Draws: {result_100['draws']}")
+    print(f"Minimax win rate: {result_100['minimax_wins']}%")
+    print(f"MCTS win rate: {result_100['mcts_wins']}%")
+    print(f"Draw rate: {result_100['draws']}%")
 
 def test_scenario(scenario_name, board, ai_list):
     """
@@ -126,9 +136,18 @@ def create_near_win_board():
     
     return board
 
-def play_games(ai1, ai2, num_games):
+def play_games(ai1, ai2, num_games, verbose=True):
     """
     Play games between two AI algorithms and return the results.
+    
+    Args:
+        ai1: First AI player (typically Minimax)
+        ai2: Second AI player (typically MCTS)
+        num_games: Number of games to play
+        verbose: Whether to print detailed progress for each game
+        
+    Returns:
+        dict: Results of the games
     """
     results = {
         'minimax_wins': 0,
@@ -137,7 +156,9 @@ def play_games(ai1, ai2, num_games):
     }
     
     for game in range(num_games):
-        print(f"Game {game+1}/{num_games}... ", end="")
+        # Only print detailed progress if verbose is True (for smaller game counts)
+        if verbose:
+            print(f"Game {game+1}/{num_games}... ", end="")
         
         # Create a new board
         board = ConnectFourBoard()
@@ -158,16 +179,20 @@ def play_games(ai1, ai2, num_games):
         winner = board.get_winner()
         
         if winner is None:
-            print("Draw!")
             results['draws'] += 1
+            if verbose:
+                print("Draw!")
         elif (winner == 1 and isinstance(ai1, MinimaxAI)) or (winner == 2 and isinstance(ai2, MinimaxAI)):
-            print("Minimax wins!")
             results['minimax_wins'] += 1
+            if verbose:
+                print("Minimax wins!")
         else:
-            print("MCTS wins!")
             results['mcts_wins'] += 1
+            if verbose:
+                print("MCTS wins!")
     
     return results
 
 if __name__ == "__main__":
     compare_performance()
+
