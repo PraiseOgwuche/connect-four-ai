@@ -202,7 +202,8 @@ class MCTS_AI:
             valid_moves = board.get_valid_moves()
             if not valid_moves:
                 break
-            move = random.choice(valid_moves)
+            # move = random.choice(valid_moves)
+            move = self._select_heuristic_move(board, valid_moves, original_player)
             board.make_move(move)
         
         # Evaluate the result
@@ -217,6 +218,43 @@ class MCTS_AI:
         else:
             # Loss
             return 0.0
+
+    def _select_heuristic_move(self, board, valid_moves, player):
+        """
+        Select a move using a lightweight heuristic similar to Minimax.
+        """
+        opponent = 3 - player
+        best_score = float('-inf')
+        best_moves = []
+
+        for move in valid_moves:
+            board_copy = self._copy_board(board)
+            board_copy.make_move(move)
+
+            # Immediate win
+            if board_copy.get_winner() == player:
+                return move
+
+            # Block opponent win
+            board_copy.current_player = opponent
+            for opp_move in board_copy.get_valid_moves():
+                board_copy_opp = self._copy_board(board_copy)
+                board_copy_opp.make_move(opp_move)
+                if board_copy_opp.get_winner() == opponent:
+                    return move
+
+            # Center preference
+            center = board.cols // 2
+            score = -abs(move - center)  # Closer to center = higher score
+
+            if score > best_score:
+                best_score = score
+                best_moves = [move]
+            elif score == best_score:
+                best_moves.append(move)
+
+        return random.choice(best_moves)
+
     
     def _copy_board(self, board):
         """

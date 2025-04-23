@@ -100,15 +100,15 @@ class TerminalInterface:
             print(f"Pruning count: {stats['pruning_count']}")
             print(f"Evaluation time: {stats['evaluation_time']:.4f} seconds")
             print(f"Nodes per second: {int(stats['nodes_per_second'])}")
-        print(f"Total time: {stats['total_time']:.4f} seconds")
+        #print(f"Total time: {stats['total_time']:.4f} seconds")
         #print(f"Total nodes explored: {stats['total_nodes_explored']}")
         #print(f"Total pruning count: {stats['total_pruning_count']}")
         #print(f"Total nodes per second: {int(stats['total_nodes_per_second'])}")
         #print(f"Total simulation time: {stats['total_simulation_time']:.4f} seconds")
         #print(f"Total simulations per second: {int(stats['total_simulations_per_second'])}")
-        print(f"Total AI wins: {self.stats['ai_wins']}")
-        print(f"Total player wins: {self.stats['player_wins']}")
-        print(f"Total draws: {self.stats['draws']}")
+        #print(f"Total AI wins: {self.stats['ai_wins']}")
+        #print(f"Total player wins: {self.stats['player_wins']}")
+        #print(f"Total draws: {self.stats['draws']}")
     
     def play_game(self):
         """
